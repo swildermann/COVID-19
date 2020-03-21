@@ -10,4 +10,8 @@ https://opendata.arcgis.com/datasets/ef4b445a53c1406892257fe63129a8ea_0.geojson
 '''
 and merges all the new information into our database. 
 
-All the magic can be found in the '''__init__.py''' file
+All the magic can be found in this file:
+'''
+__init__.py
+''' 
+
