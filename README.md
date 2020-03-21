@@ -11,8 +11,9 @@ Just download the files from here and use them as they are. We are providing a C
 
 ### get access to our database
 If you would like to connect to our database, feel free to use this information for login:
-
+```
 Server: hausverwalterstartup.database.windows.net
 Authentication type: SQL Login
 username: datareader
 password: eg4?%bKrY.T#SpBhEBk8DmH9
+```
