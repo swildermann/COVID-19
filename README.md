@@ -10,10 +10,9 @@ Source: https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Situationsb
 
 ### use the provided csv file
 Just download the files from here and use them as they are. We are providing a CSV format. 
-LINK: 
-```
+
 https://covid19publicdata.blob.core.windows.net/rki/covid19-germany.csv
-```
+
 
 The URL will stay the same even when data is updated. So feel free to grab this url in an automated manner. 
 
