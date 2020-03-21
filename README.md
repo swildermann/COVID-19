@@ -1,10 +1,12 @@
-# CoVid19
-public accessible data for CoVid19
+# COVID-19
+public accessible data for COVID-19 in Germany
 
 ## RKI
 As the Robert Koch Institute does not publish data in a computer consumable format, we decided to grab the information from their website and make this dataset public available. 
 
 This dataset is going to be updated daily, as soon as the information from the Robert Koch Institute is available. 
+
+Source: https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Situationsberichte/Archiv.html
 
 ### use the provided files
 Just download the files from here and use them as they are. We are providing a CSV format and an Excel format to use. 
