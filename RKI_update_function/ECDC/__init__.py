@@ -48,7 +48,9 @@ def main(mytimer: func.TimerRequest) -> None:
     password = os.environ.get('keyvault_db_password')
 
     params = urllib.parse.quote_plus(
-        'Driver={ODBC Driver 17 for SQL Server};Server=tcp:covid19dbserver.database.windows.net,1433;Database=covid19db;Uid=%s@covid19dbserver;Pwd=%s;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;'%(username, password))
+        'Driver={ODBC Driver 17 for SQL Server};Server=tcp:covid19dbserver.database.windows.net,1433;Database=covid19db;Uid='+username
+        +'@covid19dbserver;Pwd='+password
+        +';Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;')
     conn_str = 'mssql+pyodbc:///?odbc_connect={}'.format(params)
     engine = create_engine(conn_str, echo=False)
 

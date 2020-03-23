@@ -25,9 +25,9 @@ def main(mytimer: func.TimerRequest) -> None:
     cnxn = pyodbc.connect("Driver={ODBC Driver 17 for SQL Server};"
                       "Server=covid19dbserver.database.windows.net;"
                       "Database=covid19db;"
-                      "Uid=%s;"   #removed
-                      "Pwd=%s;"   #removed
-                      "Trusted_Connection=no;"%(username, password))
+                      "Uid="+username   
+                      +";Pwd="+password   
+                      +";Trusted_Connection=no;")
 
     cursor=cnxn.cursor()
 
