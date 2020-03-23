@@ -1,2 +1,6 @@
 azure-functions
+pandas
+requests
+sqlalchemy
 pyodbc
+xlrd
