@@ -40,6 +40,6 @@ Authentication type: SQL Login
 username: datareader
 password: eg4?%bKrY.T#SpBhEBk8DmH9
 database: covid19db
-tables: [dbo].[RKI], [dbo].[RKICounties], [dbo].[Hopkins]
-views: [dbo].[vRKI], [dbo].[vRKICounties], [dbo].[vHopkins]
+tables: [dbo].[RKI], [dbo].[RKICounties], [dbo].[Hopkins], [dbo].[ECDC]
+views: [dbo].[vRKI], [dbo].[vRKICounties], [dbo].[vHopkins], 0[dbo].[vECDC]
 ```
