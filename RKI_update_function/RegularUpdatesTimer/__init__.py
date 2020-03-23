@@ -4,6 +4,7 @@ import azure.functions as func
 from urllib.request import urlopen
 import json
 import pyodbc
+import os
 
 def main(mytimer: func.TimerRequest) -> None:
 
@@ -18,12 +19,15 @@ def main(mytimer: func.TimerRequest) -> None:
 
     features = jsonObj["features"]
 
+    username = os.environ.get('keyvault_db_username')
+    password = os.environ.get('keyvault_db_password')
+
     cnxn = pyodbc.connect("Driver={ODBC Driver 17 for SQL Server};"
                       "Server=covid19dbserver.database.windows.net;"
                       "Database=covid19db;"
-                      "Uid=;"   #removed
-                      "Pwd=;"   #removed
-                      "Trusted_Connection=no;")
+                      "Uid=%s;"   #removed
+                      "Pwd=%s;"   #removed
+                      "Trusted_Connection=no;"%(username, password))
 
     cursor=cnxn.cursor()
 

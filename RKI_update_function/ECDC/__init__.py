@@ -6,7 +6,7 @@ import urllib
 from sqlalchemy import create_engine
 import pandas as pd
 import requests
-
+import os
 import azure.functions as func
 
 
@@ -43,8 +43,9 @@ def main(mytimer: func.TimerRequest) -> None:
     df_cumsum = df.groupby(by=[country_col]).cumsum()
 
     df_result = df[['date', country_col]].join(df_cumsum)
-    username = ""
-    password = ""
+    
+    username = os.environ.get('keyvault_db_username')
+    password = os.environ.get('keyvault_db_password')
 
     params = urllib.parse.quote_plus(
         'Driver={ODBC Driver 17 for SQL Server};Server=tcp:covid19dbserver.database.windows.net,1433;Database=covid19db;Uid=%s@covid19dbserver;Pwd=%s;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;'%(username, password))

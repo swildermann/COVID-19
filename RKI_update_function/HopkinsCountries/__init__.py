@@ -6,7 +6,7 @@ import sqlalchemy
 import urllib
 from sqlalchemy import create_engine
 import requests
-
+import os
 
 import azure.functions as func
 
@@ -54,8 +54,8 @@ def main(mytimer: func.TimerRequest) -> None:
             df_result = pd.merge(left=df_result, right=df_melt, on=[
                 country_col, province_col, 'date'], how='outer')
 
-    username = ""
-    password = ""
+    username = os.environ.get('keyvault_db_username')
+    password = os.environ.get('keyvault_db_password')
 
     params = urllib.parse.quote_plus(
         'Driver={ODBC Driver 17 for SQL Server};Server=tcp:covid19dbserver.database.windows.net,1433;Database=covid19db;Uid=%s@covid19dbserver;Pwd=%s;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;'%(username, password))
