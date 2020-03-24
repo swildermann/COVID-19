@@ -47,6 +47,7 @@ def main(mytimer: func.TimerRequest) -> None:
         df_melt = df_melt.rename(
             columns={'value': qualifier, 'variable': 'date'})
         df_melt['date'] = pd.to_datetime(df_melt['date']).dt.date
+        df_melt[qualifier] = df_melt[qualifier].fillna(0)
 
         if df_result is None:
             df_result = df_melt
