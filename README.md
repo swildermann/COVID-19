@@ -15,6 +15,7 @@ Just download the files from here and use them as they are. We are providing a C
 
 https://covid19publicdata.blob.core.windows.net/rki/covid19-germany-federalstates.csv
 https://covid19publicdata.blob.core.windows.net/rki/covid19-germany-counties.csv
+https://covid19publicdata.blob.core.windows.net/rki/covid19-germany-counties-nuts3.csv (joined with NUTS3 data)
 
 The URL will stay the same even when data is updated. So feel free to grab this url in an automated manner. 
 
