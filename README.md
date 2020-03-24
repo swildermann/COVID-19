@@ -1,5 +1,5 @@
 # COVID-19
-This is a public accessible dataset for COVID-19. We made the data for Germany from the Robert Koch Insititute and worldwide data from Johns Hopkins CSSE and European Centre for Disease Prevention available on a daily base.
+This is a public accessible dataset for COVID-19. We made the data for Germany from the Robert Koch Insititute and worldwide data from Johns Hopkins CSSE and European Centre for Disease Prevention available on a daily base with daily updates.
 
 ## RKI - Dataset for Germany
 As the Robert Koch Institute does not publish data in a computer consumable format, we decided to grab the information from their website and make this dataset public available. 
