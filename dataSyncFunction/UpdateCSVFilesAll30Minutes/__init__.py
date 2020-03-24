@@ -72,7 +72,7 @@ def main(mytimer: func.TimerRequest) -> None:
         writer.writerow([x[0] for x in cursor.description])  # column headers
         for row in rows:
             writer.writerow(row)
-            
+
     block_blob_service.create_blob_from_path('ecdc','covid19-ECDC.csv','covid19-ECDC.csv') 
 
     #RKI Counties Nuts View
@@ -85,4 +85,4 @@ def main(mytimer: func.TimerRequest) -> None:
         for row in rows:
             writer.writerow(row)
 
-    block_blob_service.create_blob_from_path('ecdc','covid19-germany-counties-nuts3.csv','covid19-germany-counties-nuts3.csv')    
+    block_blob_service.create_blob_from_path('rki','covid19-germany-counties-nuts3.csv','covid19-germany-counties-nuts3.csv')    
