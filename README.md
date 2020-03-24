@@ -1,7 +1,7 @@
 # COVID-19
-public accessible data for COVID-19 in Germany
+public accessible data for COVID-19 in Germany and worldwide
 
-## RKI
+## RKI - Dataset for Germany
 As the Robert Koch Institute does not publish data in a computer consumable format, we decided to grab the information from their website and make this dataset public available. 
 
 This dataset is going to be updated daily, as soon as the information from the Robert Koch Institute is available. 
@@ -19,7 +19,7 @@ https://covid19publicdata.blob.core.windows.net/rki/covid19-germany-counties-nut
 
 The URL will stay the same even when data is updated. So feel free to grab this url in an automated manner. 
 
-## Johns Hopkins CSSE
+## Johns Hopkins CSSE - dataset worldwide
 We also provide the global data from Johns Hopkins CSSE in this database. This dataset is going to be updated daily, as soon as the information is available.
 
 Source: https://github.com/CSSEGISandData/COVID-19
@@ -27,8 +27,7 @@ Source: https://github.com/CSSEGISandData/COVID-19
 Just download the csv from here and use them as they are. We are providing a CSV format. Or use the Database (see below).
 https://covid19publicdata.blob.core.windows.net/hopkins/covid19-hopkins.csv
 
-## ECDC 
-
+## ECDC  - dataset worldwide
 Data of European Centre for Disease Prevention and Control is also available here. This dataset is going to be updated daily, as soon as the information is available.
 Just download the csv from here and use them as they are. We are providing a CSV format. Or use the Database (see below).
 https://covid19publicdata.blob.core.windows.net/ecdc/covid19-ECDC.csv
