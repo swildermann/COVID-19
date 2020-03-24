@@ -1,5 +1,5 @@
 # COVID-19
-public accessible data for COVID-19 in Germany and worldwide
+This is a public accessible dataset for COVID-19. We made the data for Germany from the Robert Koch Insititute and worldwide data from Johns Hopkins CSSE and European Centre for Disease Prevention available on a daily base.
 
 ## RKI - Dataset for Germany
 As the Robert Koch Institute does not publish data in a computer consumable format, we decided to grab the information from their website and make this dataset public available. 
@@ -43,3 +43,8 @@ database: covid19db
 tables: [dbo].[RKI], [dbo].[RKICounties], [dbo].[Hopkins], [dbo].[ECDC]
 views: [dbo].[vRKI], [dbo].[vRKICounties], [dbo].[vHopkins], 0[dbo].[vECDC]
 ```
+
+## Changelog
+- 2020-03-17 RKI reporting changed. As of today, epidemiological evaluations in the COVID-19 situation report are based only on electronically transmitted data available to the Robert Koch Institute (RKI) at the time of the data closure (11 pm).
+- 2020-03-22 Added NUTS3 dataset for Germany
+- 2020-03-23 John Hopkins changed the time series exports.
