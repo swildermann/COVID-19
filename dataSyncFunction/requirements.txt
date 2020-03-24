@@ -1,0 +1,10 @@
+azure-functions
+pandas
+requests
+sqlalchemy
+pyodbc
+xlrd
+azure-storage==0.36.0
+
+
+
