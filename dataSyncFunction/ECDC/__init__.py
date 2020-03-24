@@ -19,14 +19,13 @@ def main(mytimer: func.TimerRequest) -> None:
 
     today = datetime.datetime.now().date()
     date = today
-    while True:
-        try:
-            df = pd.read_excel("https://www.ecdc.europa.eu/sites/default/files/documents/COVID-19-geographic-disbtribution-worldwide-%s.xlsx"%date.strftime("%Y-%m-%d"))
-            logging.info("date: %s"%date)
-            break
-        except Exception as e:
-            logging.info(e)
-            date -= datetime.timedelta(days=1)
+    try:
+        df = pd.read_excel("https://www.ecdc.europa.eu/sites/default/files/documents/COVID-19-geographic-disbtribution-worldwide-%s.xlsx"%date.strftime("%Y-%m-%d"))
+        logging.info(f"date: {today}")
+    except Exception as e:
+        logging.info(e)
+        logging.info(f"No data for date {today}, yet.")
+        return
     df['DateRep'] = pd.to_datetime(df['DateRep']).dt.date
 
     country_col = 'Country/Region'
@@ -56,32 +55,37 @@ def main(mytimer: func.TimerRequest) -> None:
 
     assert df_result.duplicated().sum() == 0
 
-    table_name = "ecdc_updates"
-    try:
-        pd.read_sql("select Top(1) * from dbo.%s" %
-                              table_name, engine)
-        engine.execute(sa_text('''TRUNCATE TABLE %s''' %
-                               table_name).execution_options(autocommit=True))
-    except:
-        pass
+    table_name = "ECDC"
+    table_name_updates = f"{table_name}_updates"
 
+    try:
+        df_temp = pd.read_sql("select Top(1) * from dbo.%s"%table_name_updates ,engine )
+        engine.execute(sa_text('''TRUNCATE TABLE %s'''%table_name_updates).execution_options(autocommit=True))
+    except Exception as e:
+        print(e)
+        pass
+    
+
+    country_col = 'Country/Region'
+    dtype_dict = {}
     for col in [country_col]:
         df_result[col] = df_result[col].str.slice(start=0, stop=99)
+        dtype_dict[col] = sqlalchemy.types.NVARCHAR(length=100)
 
     df_result = df_result[['Country/Region','infections','deaths','date']]
 
-    df_result.to_sql(table_name,
+    df_result.to_sql(table_name_updates,
                      engine,
                      if_exists='append', schema='dbo',
                      index=False, chunksize=100,
-                     method='multi',                dtype={country_col: sqlalchemy.types.NVARCHAR(length=100)})
+                     method='multi', dtype=dtype_dict)
 
-    merge_statement = '''
-    MERGE INTO dbo.ECDC AS Target 
+    merge_statement = f'''
+    MERGE INTO dbo.{table_name} AS Target 
     USING 
         (
             SELECT [Country/Region], infections, deaths, date 
-            FROM dbo.ECDC_updates
+            FROM dbo.{table_name_updates}
         ) AS Source 
     ON Target.[Country/Region] = Source.[Country/Region] 
         AND Target.date = Source.date 
