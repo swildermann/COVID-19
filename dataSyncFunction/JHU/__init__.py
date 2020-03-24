@@ -18,19 +18,10 @@ def main(mytimer: func.TimerRequest) -> None:
     if mytimer.past_due:
         logging.info('The timer is past due!')
 
-    # %%
+    confirmed = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"
+    deaths = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"
 
-    # %%
-    confirmed = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv"
-
-    # %%
-    deaths = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv"
-
-    # %%
-    recovered = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv"
-
-    # %%
-    inputs = {'deaths': deaths, 'infections': confirmed, 'recovered': recovered}
+    inputs = {'deaths': deaths, 'infections': confirmed}
     df_result = None
     country_col = 'Country/Region'
     province_col = 'Province/State'
@@ -57,26 +48,24 @@ def main(mytimer: func.TimerRequest) -> None:
 
     username = os.environ.get('keyvault_db_username')
     password = os.environ.get('keyvault_db_password')
-    logging.info(username)
-    logging.info(password)
 
     params = urllib.parse.quote_plus(
         'Driver={ODBC Driver 17 for SQL Server};Server=tcp:covid19dbserver.database.windows.net,1433;Database=covid19db;Uid='+username
-        +'@covid19dbserver;Pwd='+password
-        +';Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;')
+        + '@covid19dbserver;Pwd='+password
+        + ';Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;')
     conn_str = 'mssql+pyodbc:///?odbc_connect={}'.format(params)
     engine = create_engine(conn_str, echo=False)
-
 
     # %%
     assert df_result.duplicated().sum() == 0
 
-    table_name = "Hopkins_updates"
+    table_name = "Hopkins"
+    table_name_updates = f"{table_name}_updates"
     try:
         pd.read_sql("select Top(1) * from dbo.%s" %
-                              table_name, engine)
+                    table_name_updates, engine)
         engine.execute(sa_text('''TRUNCATE TABLE %s''' %
-                               table_name).execution_options(autocommit=True))
+                               table_name_updates).execution_options(autocommit=True))
     except:
         pass
 
@@ -84,22 +73,23 @@ def main(mytimer: func.TimerRequest) -> None:
     for col in [country_col, province_col]:
         df_result[col] = df_result[col].str.slice(start=0, stop=99)
 
-    df_result = df_result[['Country/Region','Province/State','infections','recovered','deaths','date']]
+    df_result = df_result[['Country/Region',
+                           'Province/State', 'infections', 'deaths', 'date']]
 
     # %%
-    df_result.to_sql(table_name,
+    df_result.to_sql(table_name_updates,
                      engine,
                      if_exists='append', schema='dbo',
                      index=False, chunksize=100,
                      method='multi',
                      dtype={country_col: sqlalchemy.types.NVARCHAR(length=100),
                             province_col: sqlalchemy.types.NVARCHAR(length=100)})
-    merge_statement = '''
-    MERGE INTO dbo.Hopkins AS Target 
+    merge_statement = f'''
+    MERGE INTO dbo.{table_name} AS Target 
     USING 
         (
-            SELECT [Country/Region], [Province/State], infections, recovered, deaths, date 
-            FROM dbo.Hopkins_updates
+            SELECT [Country/Region], [Province/State], infections, deaths, date 
+            FROM dbo.{table_name_updates}
         ) AS Source 
     ON Target.[Country/Region] = Source.[Country/Region] 
         AND COALESCE(Target.[Province/State], '') = COALESCE(Source.[Province/State], '')
@@ -107,11 +97,10 @@ def main(mytimer: func.TimerRequest) -> None:
     WHEN MATCHED THEN 
         UPDATE SET 
         Target.infections = Source.infections, 
-        Target.recovered = Source.recovered,
         Target.deaths = Source.deaths
     WHEN NOT MATCHED BY TARGET THEN 
-        INSERT ([Country/Region], [Province/State], infections, recovered, deaths, date)
-        VALUES (Source.[Country/Region], Source.[Province/State], Source.infections, Source.recovered, Source.deaths, Source.date);
+        INSERT ([Country/Region], [Province/State], infections, deaths, date)
+        VALUES (Source.[Country/Region], Source.[Province/State], Source.infections, Source.deaths, Source.date);
     '''
     engine.execute(sa_text(merge_statement).execution_options(autocommit=True))
 
