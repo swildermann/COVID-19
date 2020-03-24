@@ -72,5 +72,17 @@ def main(mytimer: func.TimerRequest) -> None:
         writer.writerow([x[0] for x in cursor.description])  # column headers
         for row in rows:
             writer.writerow(row)
+            
+    block_blob_service.create_blob_from_path('ecdc','covid19-ECDC.csv','covid19-ECDC.csv') 
 
-    block_blob_service.create_blob_from_path('ecdc','covid19-ECDC.csv','covid19-ECDC.csv')    
+    #RKI Counties Nuts View
+    selectQueryRKICountiesNuts= "SELECT * FROM vRKICountiesNUTS ORDER BY  [date], [NUTS3];"
+    rows = cursor.execute(selectQueryRKICountiesNuts)
+
+    with open('covid19-germany-counties-nuts3.csv', 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow([x[0] for x in cursor.description])  # column headers
+        for row in rows:
+            writer.writerow(row)
+
+    block_blob_service.create_blob_from_path('ecdc','covid19-germany-counties-nuts3.csv','covid19-germany-counties-nuts3.csv')    
