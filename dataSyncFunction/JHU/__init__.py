@@ -19,12 +19,16 @@ def main(mytimer: func.TimerRequest) -> None:
         logging.info('The timer is past due!')
 
     today = datetime.datetime.now().date()
-    try:
-        logging.info(f"date: {today}")
-        download_insert_hopkins(today)
-    except Exception as e:
-        logging.info(e)
-        logging.info(f"No data for date {today}, yet.")
+    for i in range(10):
+        try:
+            logging.info(f"Trying {today}...")
+            download_insert_hopkins(today)
+            logging.info(f"Success with {today}.")
+            break
+        except Exception as e:
+            logging.info(e)
+            logging.info(f"No data for date {today}, yet.")
+            today -= datetime.timedelta(days=1)
 
     logging.info('Python timer trigger function ran at %s', utc_timestamp)
 
@@ -65,8 +69,8 @@ def download_insert_hopkins(date):
     table_name_updates = f"{table_name}_updates"
 
     try:
-        df_temp = pd.read_sql("select Top(1) * from dbo.%s"%table_name_updates ,engine )
-        engine.execute(sa_text('''TRUNCATE TABLE %s'''%table_name_updates).execution_options(autocommit=True))
+        df_temp = pd.read_sql(f"select Top(1) * from dbo.{table_name_updates}", engine)
+        engine.execute(sa_text(f'TRUNCATE TABLE {table_name_updates}').execution_options(autocommit=True))
     except Exception as e:
         print(e)
         pass
@@ -78,7 +82,7 @@ def download_insert_hopkins(date):
     dtype_dict = {}
     for col in [country_col, province_col, district_col]:
         if df_result[col].notnull().sum() > 0:
-            print(col)
+            #print(col)
             df_result.loc[df_result[col].notnull(), col] = df_result.loc[df_result[col].notnull(), col].str.slice(start=0, stop=99)
             dtype_dict[col] = sqlalchemy.types.NVARCHAR(length=100)
 
