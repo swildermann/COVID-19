@@ -1,7 +1,7 @@
 # COVID-19
 This is a public accessible dataset for COVID-19. We made the data for Germany from the Robert Koch Insititute and worldwide data from Johns Hopkins CSSE and European Centre for Disease Prevention available on a daily base with daily updates.
 
-## RKI - Dataset for Germany
+## Robert Koch Institute (RKI) - dataset for Germany
 As the Robert Koch Institute does not publish data in a computer consumable format, we decided to grab the information from their website and make this dataset public available. 
 
 This dataset is going to be updated daily, as soon as the information from the Robert Koch Institute is available. 
@@ -27,12 +27,12 @@ Source: https://github.com/CSSEGISandData/COVID-19
 Just download the csv from here and use them as they are. We are providing a CSV format. Or use the Database (see below).
 https://covid19publicdata.blob.core.windows.net/hopkins/covid19-hopkins.csv
 
-## ECDC  - dataset worldwide
+## European Centre for Disease Prevention and Control (ECDC) - dataset worldwide
 Data of European Centre for Disease Prevention and Control is also available here. This dataset is going to be updated daily, as soon as the information is available.
 Just download the csv from here and use them as they are. We are providing a CSV format. Or use the Database (see below).
 https://covid19publicdata.blob.core.windows.net/ecdc/covid19-ECDC.csv
 
-## COVID-19 image data collection
+## Image data collection
 If you are interested in Covid-19 image data, please have a look here: https://github.com/ieee8023/covid-chestxray-dataset
 This dataset provides cases with chest X-ray or CT images for COVID-19 cases as well as MERS, SARS, and ARDS.
 
