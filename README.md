@@ -32,6 +32,10 @@ Data of European Centre for Disease Prevention and Control is also available her
 Just download the csv from here and use them as they are. We are providing a CSV format. Or use the Database (see below).
 https://covid19publicdata.blob.core.windows.net/ecdc/covid19-ECDC.csv
 
+## COVID-19 image data collection
+If you are interested in Covid-19 image data, please have a look here: https://github.com/ieee8023/covid-chestxray-dataset
+This dataset provides cases with chest X-ray or CT images for COVID-19 cases as well as MERS, SARS, and ARDS.
+
 ## Database Access
 If you would like to connect to our database, feel free to use this information for login:
 ```
