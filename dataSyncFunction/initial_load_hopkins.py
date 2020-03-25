@@ -1,3 +1,4 @@
+
 import datetime
 import logging
 import pandas as pd
@@ -7,6 +8,7 @@ import urllib
 from sqlalchemy import create_engine
 import requests
 import os
+from urllib.error import HTTPError
 
 import azure.functions as func
 
@@ -33,13 +35,13 @@ def main(mytimer: func.TimerRequest) -> None:
     logging.info('Python timer trigger function ran at %s', utc_timestamp)
 
 
-
 base_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/"
 country_col = 'Country/Region'
 province_col = 'Province/State'
 district_col = 'District'
 string_cols = [country_col, province_col, district_col]
 key_cols = string_cols+['date']
+
 
 def download_insert_hopkins(date):
     df = pd.read_csv(base_url+date.strftime("%m-%d-%Y")+".csv")
@@ -56,48 +58,48 @@ def download_insert_hopkins(date):
                    ].rename(columns={'Admin2': 'District', 'Long_': 'Long', 'Confirmed': 'infections', 'Deaths': 'deaths', 'Recovered': 'recovered'})
     df_result = cleanup_df(df_result)
 
+    # for col in ['infections', 'deaths', 'recovered']:
+    #    df_result[col] = df_result[col].fillna(0)
+
     username = os.environ.get('keyvault_db_username')
     password = os.environ.get('keyvault_db_password')
 
     params = urllib.parse.quote_plus(
         'Driver={ODBC Driver 17 for SQL Server};Server=tcp:covid19dbserver.database.windows.net,1433;Database=covid19db;Uid='+username
-        +'@covid19dbserver;Pwd='+password
-        +';Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;')
+        + '@covid19dbserver;Pwd='+password
+        + ';Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;')
     conn_str = 'mssql+pyodbc:///?odbc_connect={}'.format(params)
     engine = create_engine(conn_str, echo=False)
 
-
-
     assert df_result.duplicated().sum() == 0
+    # print(df_result[df_result.duplicated(
+    #    subset=string_cols+['date'], keep=False)])
     assert df_result.duplicated(subset=key_cols).sum() == 0
 
     table_name = "Hopkins"
     table_name_updates = f"{table_name}_updates"
 
     try:
-        df_temp = pd.read_sql(f"select Top(1) * from dbo.{table_name_updates}", engine)
-        engine.execute(sa_text(f'TRUNCATE TABLE {table_name_updates}').execution_options(autocommit=True))
+        df_temp = pd.read_sql(
+            f"select Top(1) * from dbo.{table_name_updates}", engine)
+        engine.execute(sa_text(
+            f'TRUNCATE TABLE {table_name_updates}').execution_options(autocommit=True))
     except Exception as e:
         print(e)
         pass
-    
-
 
     dtype_dict = {}
-    for col in string_cols:
+    for col in [country_col, province_col, district_col]:
         if df_result[col].notnull().sum() > 0:
-            #print(col)
-            df_result.loc[df_result[col].notnull(), col] = df_result.loc[df_result[col].notnull(), col].str.slice(start=0, stop=99)
+            # print(col)
+            df_result.loc[df_result[col].notnull(
+            ), col] = df_result.loc[df_result[col].notnull(), col].str.slice(start=0, stop=99)
             dtype_dict[col] = sqlalchemy.types.NVARCHAR(length=100)
-
-
-    df_result.to_sql(table_name_updates, 
-                engine,
-                if_exists='append',schema='dbo',
-                    index=False, chunksize=100,
-                    method='multi', dtype=dtype_dict)
-
-    
+    df_result.to_sql(table_name_updates,
+                     engine,
+                     if_exists='append', schema='dbo',
+                     index=False, chunksize=100,
+                     method='multi', dtype=dtype_dict)
 
     merge_statement = f'''
     MERGE INTO dbo.{table_name} AS Target 
@@ -123,6 +125,7 @@ def download_insert_hopkins(date):
         VALUES (Source.[Country/Region], Source.[Province/State],Source.District,Source.FIPS, Source.Lat, Source.Long, Source.infections,Source.deaths,Source.recovered, Source.date);
     '''
     engine.execute(sa_text(merge_statement).execution_options(autocommit=True))
+
 
 def cleanup_df(df_in):
     df = df_in.copy()
@@ -170,3 +173,19 @@ def cleanup_df(df_in):
 
     return df
 
+
+date = datetime.date(year=2020, month=1, day=22)
+#date = datetime.date(year=2020, month=2, day=2)
+#date = datetime.date(year=2020, month=3, day=27)
+print(pd.__version__)
+
+while True:
+    try:
+        print(f'Downloading {date}...')
+        download_insert_hopkins(date)
+        date += datetime.timedelta(days=1)
+    except HTTPError as e:
+        print(e)
+        print(type(e))
+        break
+print("Done")
