@@ -24,13 +24,24 @@ We also provide the global data from Johns Hopkins CSSE in this database. This d
 
 Source: https://github.com/CSSEGISandData/COVID-19
 
-Just download the csv from here and use them as they are. We are providing a CSV format. Or use the Database (see below).
+### use the provided csv file
+Just download the csv from here and use them as they are. We are providing a CSV format.
+
 https://covid19publicdata.blob.core.windows.net/hopkins/covid19-hopkins.csv
+
+Or use the Database (see below).
 
 ## European Centre for Disease Prevention and Control (ECDC) - dataset worldwide
 Data of European Centre for Disease Prevention and Control is also available here. This dataset is going to be updated daily, as soon as the information is available.
-Just download the csv from here and use them as they are. We are providing a CSV format. Or use the Database (see below).
+
+Source: https://www.ecdc.europa.eu/en/coronavirus
+
+### use the provided csv file
+Just download the csv from here and use them as they are. We are providing a CSV format.
+
 https://covid19publicdata.blob.core.windows.net/ecdc/covid19-ECDC.csv
+
+Or use the Database (see below).
 
 ## Image data collection
 If you are interested in Covid-19 image data, please have a look here: https://github.com/ieee8023/covid-chestxray-dataset
@@ -44,8 +55,8 @@ Authentication type: SQL Login
 username: datareader
 password: eg4?%bKrY.T#SpBhEBk8DmH9
 database: covid19db
-tables: [dbo].[RKI], [dbo].[RKICounties], [dbo].[Hopkins], [dbo].[ECDC]
-views: [dbo].[vRKI], [dbo].[vRKICounties], [dbo].[vHopkins], 0[dbo].[vECDC]
+tables: [dbo].[RKI], [dbo].[RKICounties], [dbo].[Hopkins], [dbo].[HopkinsTS], [dbo].[ECDC]
+views: [dbo].[vRKI], [dbo].[vRKICounties], [dbo].[vHopkins], [dbo].[vHopkinsTS], [dbo].[vECDC]
 ```
 
 ## Reports
@@ -58,6 +69,7 @@ Link to the reports: https://lnkd.in/dH2uvh5
 You can also find the original Power BI file in the repo: https://github.com/swildermann/COVID-19/tree/master/reporting
 
 ## Changelog
-- 2020-03-17 RKI reporting changed. As of today, epidemiological evaluations in the COVID-19 situation report are based only on electronically transmitted data available to the Robert Koch Institute (RKI) at the time of the data closure (11 pm).
+- 2020-03-26 We now provide two different tables for the John Hopkins CSSE data. The table "Hopkins" is loaded based on the daily reports. The table HopkinsTS is loaded based on the time series export data.
+- 2020-03-23 John Hopkins CSSE changed the time series exports. They now only provide time series data for infections and deaths.
 - 2020-03-22 Added NUTS3 dataset for Germany
-- 2020-03-23 John Hopkins changed the time series exports.
+- 2020-03-17 RKI reporting changed. As of today, epidemiological evaluations in the COVID-19 situation report are based only on electronically transmitted data available to the Robert Koch Institute (RKI) at the time of the data closure (11 pm).
