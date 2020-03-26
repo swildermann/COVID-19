@@ -48,6 +48,15 @@ tables: [dbo].[RKI], [dbo].[RKICounties], [dbo].[Hopkins], [dbo].[ECDC]
 views: [dbo].[vRKI], [dbo].[vRKICounties], [dbo].[vHopkins], 0[dbo].[vECDC]
 ```
 
+## Reports
+We also provide some reports we created on top of this data set.
+
+Link to the reports: https://lnkd.in/dH2uvh5 
+
+![alt text](https://github.com/swildermann/COVID-19/blob/master/img/Hopkins_Dashboard.jpg)
+
+You can also find the original Power BI file in the repo: https://github.com/swildermann/COVID-19/tree/master/reporting
+
 ## Changelog
 - 2020-03-17 RKI reporting changed. As of today, epidemiological evaluations in the COVID-19 situation report are based only on electronically transmitted data available to the Robert Koch Institute (RKI) at the time of the data closure (11 pm).
 - 2020-03-22 Added NUTS3 dataset for Germany
