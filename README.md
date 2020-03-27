@@ -69,6 +69,8 @@ Link to the reports: https://lnkd.in/dH2uvh5
 You can also find the original Power BI file in the repo: https://github.com/swildermann/COVID-19/tree/master/reporting
 
 ## Changelog
+- 2020-03-27 John Hopkins CSSE changed the time series exports. They provide again time series data for recovered cases. 
+- 2020-03-27 Bugfix in [dbo].[HopkinsTS] (for UK and US data).
 - 2020-03-26 We now provide two different tables for the John Hopkins CSSE data. The table "Hopkins" is loaded based on the daily reports. The table HopkinsTS is loaded based on the time series export data.
 - 2020-03-23 John Hopkins CSSE changed the time series exports. They now only provide time series data for infections and deaths.
 - 2020-03-22 Added NUTS3 dataset for Germany
