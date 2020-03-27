@@ -9,6 +9,13 @@ from sqlalchemy import create_engine
 import requests
 import os
 from urllib.error import HTTPError
+import json
+
+from shared.helpers import cleanup_df, country_col, province_col, district_col, date_col
+
+
+#.helpers import date_col, country_col, province_col, district_col, cleanup_df  #(explicit relative)
+
 
 import azure.functions as func
 
@@ -36,11 +43,8 @@ def main(mytimer: func.TimerRequest) -> None:
 
 
 base_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/"
-country_col = 'Country/Region'
-province_col = 'Province/State'
-district_col = 'District'
-string_cols = [country_col, province_col, district_col]
-key_cols = string_cols+['date']
+key_cols = [country_col, province_col, district_col, date_col]
+
 
 
 def download_insert_hopkins(date):
@@ -56,13 +60,20 @@ def download_insert_hopkins(date):
 
     df_result = df[['Country/Region', 'Province/State', "Admin2", "FIPS", 'Lat', 'Long_', 'Confirmed', 'Deaths', 'Recovered', 'date']
                    ].rename(columns={'Admin2': 'District', 'Long_': 'Long', 'Confirmed': 'infections', 'Deaths': 'deaths', 'Recovered': 'recovered'})
-    df_result = cleanup_df(df_result)
+    df_result = cleanup_df(df_result, key_cols = key_cols)
 
     # for col in ['infections', 'deaths', 'recovered']:
     #    df_result[col] = df_result[col].fillna(0)
 
     username = os.environ.get('keyvault_db_username')
     password = os.environ.get('keyvault_db_password')
+
+    if os.path.exists("local.settings.json"):
+        with open("local.settings.json") as json_file:
+            data = json.loads(json_file.read())
+            username = data['Values']['keyvault_db_username']
+            password = data['Values']['keyvault_db_password']
+
 
     params = urllib.parse.quote_plus(
         'Driver={ODBC Driver 17 for SQL Server};Server=tcp:covid19dbserver.database.windows.net,1433;Database=covid19db;Uid='+username
@@ -126,52 +137,6 @@ def download_insert_hopkins(date):
     '''
     engine.execute(sa_text(merge_statement).execution_options(autocommit=True))
 
-
-def cleanup_df(df_in):
-    df = df_in.copy()
-    # replace nan with 0 in numeric cols
-    fillna_dict = {'infections': 0, 'deaths': 0, 'recovered': 0}
-    df = df.fillna(fillna_dict)
-    # replace "None" with pd.NA
-    for str_col in string_cols:
-        if df[str_col].notnull().sum() > 0:
-            df.loc[df[str_col].str.lower() == "none", str_col] = pd.NA
-
-    # If Province == Recoverd  -> Province = pd.NA
-    df.loc[df[province_col] == "Recovered", province_col] = pd.NA
-    # replace certain countries based on province string match
-    if df[province_col].notnull().sum() > 0:
-        province_country_replace_dict = {'Hong Kong': 'China', 'Macau': 'China', 'Taiwan': 'Taiwan', 'Grand Princess': 'Cruise Ship',
-                                         'Diamond Princess': 'Cruise Ship'
-                                         }
-        for key, value in province_country_replace_dict.items():
-            # print(key, value)
-            df.loc[df[province_col].fillna(
-                '').str.contains(key), country_col] = value
-
-    string_col_replacement = {key: "None" for key in string_cols}
-    df = df.fillna(string_col_replacement)
-
-    # replace certain countries based on country string match
-    if df[country_col].notnull().sum() > 0:
-        country_country_replace_dict = {'Gambia': 'Gambia', 'Congo': 'Congo', 'China': 'China', 'Czech': 'Czechia',
-                                        'Dominica': 'Dominican Republic', 'UK': 'United Kingdom', 'Bahamas': 'Bahamas',
-                                        'US': 'United States', 'Korea, South': 'South Korea', 'Taiwan': 'Taiwan',
-                                        'Iran': 'Iran', 'Viet nam': 'Vietnam', 'Russia': 'Russia', 'Republic of Korea': 'South Korea'
-                                        }
-        # This command should work, but somehow it does not
-        # df.loc[df[country_col].str.lower().str.contains(key), country_col] = value
-        # --> Stack Overflow
-        for key, value in country_country_replace_dict.items():
-            df.loc[df[country_col].str.contains(
-                key, case=False), country_col] = value
-
-    df = df.groupby(by=key_cols).agg({'FIPS': 'max', 'Lat': 'max', 'Long': 'max',
-                                      'infections': 'sum', 'deaths': 'sum', 'recovered': 'sum'}).reset_index()
-    for col in string_cols:
-        df.loc[df[col].str.contains("None"), col] = pd.NA
-
-    return df
 
 
 date = datetime.date(year=2020, month=1, day=22)
