@@ -65,3 +65,25 @@ def cleanup_df(df_in, key_cols):
             df.loc[df[col].str.contains("None"), col] = pd.NA
 
     return df
+
+
+def translate_county(federalState):
+    if federalState == "Bayern":
+        federalState = "Bavaria"
+    elif federalState == "Hessen":
+        federalState = "Hesse"
+    elif federalState == "Niedersachsen":
+        federalState = "Lower Saxony"
+    elif federalState == "Mecklenburg-Vorpommern":
+        federalState = "Mecklenburg-Western Pomerania"
+    elif federalState == "Nordrhein-Westfalen":
+        federalState = "North Rhine-Westphalia"
+    elif federalState == "Rheinland-Pfalz":
+        federalState = "Rhineland-Palatinate"
+    elif federalState == "Sachsen":
+        federalState = "Saxony"
+    elif federalState == "Sachsen-Anhalt":
+        federalState = "Saxony-Anhalt"
+    elif federalState == "Thüringen":
+        federalState = "Thuringia"
+    return federalState

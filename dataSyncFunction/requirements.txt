@@ -4,6 +4,7 @@ requests
 sqlalchemy
 pyodbc
 xlrd
+scipy
 azure-storage==0.36.0
 
 
