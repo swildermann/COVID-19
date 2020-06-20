@@ -81,6 +81,9 @@ def main(mytimer: func.TimerRequest) -> None:
 
     df_result = df_result[['Country/Region', 'infections', 'deaths', 'date']]
 
+    df_result.infections = df_result.infections.fillna(0)
+    df_result.deaths = df_result.deaths.fillna(0)
+
     df_result.to_sql(table_name_updates,
                      engine,
                      if_exists='append', schema='dbo',
