@@ -10,6 +10,13 @@ import os
 
 import azure.functions as func
 
+from .. import shared
+from datetime import date
+
+
+key_cols = [shared.helpers.country_col,
+            shared.helpers.province_col, shared.helpers.date_col]
+
 
 def main(mytimer: func.TimerRequest) -> None:
     utc_timestamp = datetime.datetime.utcnow().replace(
@@ -20,8 +27,9 @@ def main(mytimer: func.TimerRequest) -> None:
 
     confirmed = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"
     deaths = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"
+    recovered = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv"
 
-    inputs = {'deaths': deaths, 'infections': confirmed}
+    inputs = {'deaths': deaths, 'infections': confirmed, 'recovered': recovered}
     df_result = None
     country_col = 'Country/Region'
     province_col = 'Province/State'
@@ -45,9 +53,11 @@ def main(mytimer: func.TimerRequest) -> None:
         if df_result is None:
             df_result = df_melt
         else:
-            df_melt = df_melt.drop(['Lat','Long'], axis = 1)
-            df_result = pd.merge(left=df_result, right=df_melt, on=[
-                country_col, province_col, 'date'], how='outer')
+            df_melt = df_melt.drop(['Lat', 'Long'], axis=1)
+            df_result = pd.merge(
+                left=df_result, right=df_melt, on=key_cols, how='outer')
+
+    df_result = shared.helpers.cleanup_df(df_result, key_cols=key_cols)
 
     username = os.environ.get('keyvault_db_username')
     password = os.environ.get('keyvault_db_password')
@@ -62,7 +72,7 @@ def main(mytimer: func.TimerRequest) -> None:
     # %%
     assert df_result.duplicated().sum() == 0
 
-    table_name = "JHU"
+    table_name = "HopkinsTS"
     table_name_updates = f"{table_name}_updates"
     try:
         pd.read_sql("select Top(1) * from dbo.%s" %
@@ -72,12 +82,11 @@ def main(mytimer: func.TimerRequest) -> None:
     except:
         pass
 
-    # %%
     for col in [country_col, province_col]:
         df_result[col] = df_result[col].str.slice(start=0, stop=99)
 
     df_result = df_result[['Country/Region',
-                           'Province/State', 'Lat', 'Long', 'infections', 'deaths', 'date']]
+                           'Province/State', 'Lat', 'Long', 'infections', 'deaths', 'recovered', 'date']]
 
     # %%
     df_result.to_sql(table_name_updates,
@@ -91,7 +100,7 @@ def main(mytimer: func.TimerRequest) -> None:
     MERGE INTO dbo.{table_name} AS Target 
     USING 
         (
-            SELECT [Country/Region], [Province/State], Lat, Long, infections, deaths, date 
+            SELECT [Country/Region], [Province/State], Lat, Long, infections, deaths, recovered, date 
             FROM dbo.{table_name_updates}
         ) AS Source 
     ON Target.[Country/Region] = Source.[Country/Region] 
@@ -100,10 +109,11 @@ def main(mytimer: func.TimerRequest) -> None:
     WHEN MATCHED THEN 
         UPDATE SET 
         Target.infections = Source.infections, 
-        Target.deaths = Source.deaths
+        Target.deaths = Source.deaths,
+        Target.recovered = Source.recovered
     WHEN NOT MATCHED BY TARGET THEN 
-        INSERT ([Country/Region], [Province/State], Lat, Long, infections, deaths, date)
-        VALUES (Source.[Country/Region], Source.[Province/State], Source.[Lat],Source.[Long], Source.infections, Source.deaths, Source.date);
+        INSERT ([Country/Region], [Province/State], Lat, Long, infections, deaths, recovered, date)
+        VALUES (Source.[Country/Region], Source.[Province/State], Source.[Lat],Source.[Long], Source.infections, Source.deaths, Source.recovered, Source.date);
     '''
     engine.execute(sa_text(merge_statement).execution_options(autocommit=True))
 
