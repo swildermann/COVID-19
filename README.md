@@ -77,6 +77,7 @@ Link to the reports: https://lnkd.in/dH2uvh5
 You can also find the original Power BI file in the repo: https://github.com/swildermann/COVID-19/tree/master/reporting
 
 ## Changelog
+- 2020-12-14 ECDC switched to a weekly reporting schedule for the COVID-19 situation worldwide and in the EU/EEA and the UK on 17 December 2020. Hence, all daily updates have been discontinued from 14 December.
 - 2020-03-27 Johns Hopkins CSSE changed the time series exports. They provide again time series data for recovered cases. 
 - 2020-03-27 Bugfix in [dbo].[HopkinsTS] (for UK and US data).
 - 2020-03-26 We now provide two different tables for the Johns Hopkins CSSE data. The table "Hopkins" is loaded based on the daily reports. The table HopkinsTS is loaded based on the time series export data.
