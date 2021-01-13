@@ -43,6 +43,14 @@ https://covid19publicdata.blob.core.windows.net/ecdc/covid19-ECDC.csv
 
 Or use the Database (see below).
 
+<b>UPDATE:</b> "ECDC switched to a weekly reporting schedule for the COVID-19 situation worldwide and in the EU/EEA and the UK on 17 December 2020.
+
+ECDC’s decision to discontinue daily data collection is based on the fact that the daily number of cases is frequently subject to retrospective corrections, delays in reporting and/or clustered reporting of data for several days. Consequently, day to day variations in the number of cases does not constitute a valid basis for policy decisions. ECDC continues to monitor events and reports of concern through its epidemic intelligence, and will disseminate important information arising from this activity as and when relevant to inform public health action.
+
+Hence, all daily updates have been discontinued from 14 December. "
+
+Source: https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide
+
 ## Image data collection
 If you are interested in Covid-19 image data, please have a look here: https://github.com/ieee8023/covid-chestxray-dataset
 This dataset provides cases with chest X-ray or CT images for COVID-19 cases as well as MERS, SARS, and ARDS.
