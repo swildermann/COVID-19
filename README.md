@@ -1,7 +1,7 @@
 
 **NOTE**
 This repository is deprecated. The implementation is not running anymore. Please look for alternatives if you are using this as a data source for your own projects. 
-In case of need for this data on a daily basis, please contact tklerx@paiqo.com. 
+In case of need for this data on a daily basis, please contact covid19-data@paiqo.com. 
 
 
 # COVID-19
