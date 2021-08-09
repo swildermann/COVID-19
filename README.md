@@ -1,7 +1,7 @@
----
+
 **NOTE**
 This repository is deprecated. The implementation is not running anymore. Please look for alternatives if you are using this as a data source for your own projects. 
----
+
 
 # COVID-19
 This is a public accessible dataset for COVID-19. We made the data for Germany from the Robert Koch Insititute and worldwide data from Johns Hopkins CSSE and European Centre for Disease Prevention available on a daily base with daily updates.
